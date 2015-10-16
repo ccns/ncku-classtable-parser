@@ -1,0 +1,27 @@
+{
+  "name": "ncku-classtable-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "cheerio": "^0.19.0",
+    "cookie": "^0.2.2",
+    "iconv-lite": "^0.4.13",
+    "node-sha1": "^1.0.1",
+    "request": "^2.65.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccns/ncku-classtable-parser.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ccns/ncku-classtable-parser/issues"
+  },
+  "homepage": "https://github.com/ccns/ncku-classtable-parser#readme"
+}
