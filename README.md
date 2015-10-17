@@ -16,7 +16,7 @@ passwd: 成功入口密碼(hashed by sha1)
 #### Return
 ```
 Success: Student schedule in JSON form
-Failed: err/帳號密碼錯誤
+Err: 帳號密碼錯誤
 ```
 
 ## Dependencies
