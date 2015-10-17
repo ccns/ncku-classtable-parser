@@ -5,6 +5,9 @@
 [NCKU select course helper](https://ncku-select-course-helper.herokuapp.com)
 
 ## APIs
+```
+POST /
+```
 #### Params
 ```
 stu_no: 學號
