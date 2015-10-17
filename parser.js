@@ -8,7 +8,7 @@ function parser(stu_no, passwd, callback) {
       $ = cheerio.load(html, {decodeEntities: false});
       var table = $('table tr').get().map(function(row) {
         return $(row).find('td').get().map(function(cell) {
-            return $(cell).html();
+            return $(cell).html().trim();
           });
         });
       //console.log(table);
