@@ -53,9 +53,11 @@ function login(form, callback) {
                 return callback(str);
               }
             })// schedule request
-        }else{
+        }else if(str.length > 300){
           logout();
           login(form, callback);
+        }else{
+          return callback(-1);
         }
 
       }
