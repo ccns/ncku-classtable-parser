@@ -2,9 +2,9 @@
 
 爬成大選課系統的課表。
 
-[NCKU select course helper](https://ncku-select-course-helper.herokuapp.com)
+[NCKU Class Table Parser](https://ncku-classtable-parser.herokuapp.com)
 
-## APIs
+## API
 ```
 POST /
 ```
