@@ -17,7 +17,7 @@ http.createServer(function (req, res) {
       params[p[0]] = p[1];
     }
 
-    console.log(params);
+    //console.log(params);
     res.writeHead(200);
 
     parser(params.stu_no, params.passwd, function (table) {
