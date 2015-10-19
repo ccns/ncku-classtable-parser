@@ -4,6 +4,8 @@
 
 [NCKU Class Table Parser](https://ncku-classtable-parser.herokuapp.com)
 
+**警告** 目前這隻程式經過http登入，所以可能會有安全性問題，若對帳號安全有疑慮請勿使用。
+
 ## API
 ```
 POST /
@@ -27,3 +29,6 @@ Err: 帳號密碼錯誤
     * cookie
     * iconv-lite
     * request
+
+## TOTO
+- [ ] 改成https
