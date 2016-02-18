@@ -1,30 +1,24 @@
-var http = require('http');
+var app = require('express')();
+var bodyParser = require('body-parser');
 var parser = require('./parser.js');
 
-http.createServer(function (req, res) {
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.post('/', function (req, res) {
+
   console.log("Request received.");
-  var body = "";
-  req.on('data', function (chunk) {
-    body += chunk;
+
+  var params = req.body;
+  // console.log(params);
+
+  res.header('Access-Control-Allow-Origin', '*');
+  parser(params.stu_no, params.passwd, function (table) {
+    res.json(JSON.stringify(table));
   });
-  req.on('end', function () {
-    //console.log('POSTed: ' + body);
 
-    var ps = body.split('&');
-    var params = {};
-    for (var i = 0; i < ps.length; i++) {
-      p = ps[i].split('=');
-      params[p[0]] = p[1];
-    }
+});
 
-    //console.log(params);
-    res.writeHead(200);
-
-    parser(params.stu_no, params.passwd, function (table) {
-      res.end(JSON.stringify(table));
-    });
-
-  });
-}).listen( process.env.PORT || 3000 , function () {
+app.listen( process.env.PORT || 3000 , function () {
   console.log("Listening on port %s", process.env.PORT || 3000);
 });
