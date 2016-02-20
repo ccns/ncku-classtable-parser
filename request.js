@@ -41,22 +41,28 @@ function login(form, callback) {
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var str = iconv.decode(new Buffer(body), "big5");
-        console.log("login response length: " + str.length); // login success when str.length < 80
+        console.log("Login response length: " + str.length); // login success when str.length < 80
 
-        if(str.length < 80) {
+        if(str.length == 147 || str.length == 58) {
+          console.log( "Login status: Login success!" );
           request('http://course.ncku.edu.tw/course/schedule.php',
             function (error, response, body) {
               if (!error && response.statusCode == 200) {
                 var str = iconv.decode(new Buffer(body), "big5");
                 //console.log(str);
                 logout();
-                return callback(str);
+                return callback(0,str);
               }
             })// schedule request
-        }else if(str.length > 300 && str.length < 320){
+        }else if(str.length == 308){
+          console.log( "Login status: Double login, logout and login again" );
           logout();
           login(form, callback);
+        }else if(str.length == 122){
+          console.log( "Login status: Wrong username or password!" );
+          return callback(1);
         }else{
+          console.log( "Login status: Unknown condition." );
           return callback(-1);
         }
 
