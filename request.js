@@ -58,7 +58,7 @@ function login(form, callback) {
           console.log( "Login status: Double login, logout and login again" );
           logout();
           login(form, callback);
-        }else if(str.length == 122){
+        }else if(str.length == 122 || str.length == 123){
           console.log( "Login status: Wrong username or password!" );
           return callback(1);
         }else{
