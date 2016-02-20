@@ -19,6 +19,16 @@ app.post('/', function (req, res) {
 
 });
 
+app.get('/search', function (req, res) {
+  var q = req.query.q;
+  require('request')('http://course.c4labs.xyz/search/?q=' + q, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.json(body);
+    }
+  })
+});
+
 app.listen( process.env.PORT || 3000 , function () {
   console.log("Listening on port %s", process.env.PORT || 3000);
 });
