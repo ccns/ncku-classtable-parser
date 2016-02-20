@@ -36,7 +36,10 @@ app.post('/', function (req, res) {
                 if ( body != "TMD" ) {
                   var b = JSON.parse(body);
                   if ( b.total > 0) {
-                    table[ii][jj].room = b.courses[0].room.replace(/ +/g, " ");
+                    for (var i = 0; i < b.courses.length; i++) {
+                      if ( b.courses[i].no == table[ii][jj].course_no )
+                        table[ii][jj].room = b.courses[i].room.replace(/ +/g, " ");
+                    }
                   } else {
                     console.log("Total = 0");
                     table[ii][jj].room = "";
