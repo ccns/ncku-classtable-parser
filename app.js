@@ -5,7 +5,7 @@ var parser = require('./parser.js');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/', function (req, res) {
+app.post('/', async function (req, res) {
 
   console.log("Request received.");
 
@@ -13,7 +13,8 @@ app.post('/', function (req, res) {
   // console.log(params);
 
   res.header('Access-Control-Allow-Origin', '*');
-  parser(params.stu_no, params.passwd, function (table) {
+  try {
+    const table = await parser(params.stu_no, params.passwd)
     // console.log(table);
 
     var total = 0;
@@ -28,6 +29,7 @@ app.post('/', function (req, res) {
         table[i][j] = {};
         table[i][j].course_no = course_no;
         table[i][j].text = text;
+        
         function catchCounter() {
           var ii = i; // closure
           var jj = j;
@@ -73,8 +75,9 @@ app.post('/', function (req, res) {
 
     if (params.room == "false")
       res.json(JSON.stringify(table))
-
-  });
+  } catch (error) {
+    console.error(error);
+  }
 
 });
 

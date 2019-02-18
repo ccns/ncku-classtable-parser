@@ -1,73 +1,97 @@
-var request = require('request');
-var iconv = require('iconv-lite');
+const axios = require('axios');
+const iconv = require('iconv-lite');
+const querystring = require('querystring');
+const axiosCookieJarSupport = require('axios-cookiejar-support').default;
+const tough = require('tough-cookie');
+
+axiosCookieJarSupport(axios);
+
+const cookieJar = new tough.CookieJar();
+
+axios.defaults.baseURL = 'https://course.ncku.edu.tw/course/';
 
 var stu_no = '';
 var passwd = '';
 var id_no = 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3';
 
-var j = request.jar()
-var request = request.defaults({encoding:null,jar: j})
+class LoginError extends Error {
+  constructor(statusCode, data, ...params) {
+    super(...params);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, LoginError);
+    }
+    this.status = statusCode;
+    this.data = data;
+  }
+}
 
-function get(stu_no, passwd, callback) {
-  var form = {
+async function get(stu_no, passwd) {
+  var form = querystring.stringify({
     stu_no: stu_no,
     passwd: passwd,
-    id_no: id_no
-  }
-
-  request('http://course.ncku.edu.tw/course/login.php', function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      //console.log(j) // watch jar
-      login(form, callback);
-    }
+    // id_no: id_no
   })
+
+  const response = await axios.get('login.php');
+  if (response.status == 200) {
+    await logout();
+    await login(form);
+    console.log( "Login status: Login success!" );
+    const schedule_html = await getSchedule();
+    await logout();
+    return schedule_html;
+  }
 }
 
-function logout() {
-  request('http://course.ncku.edu.tw/course/logout.php',
-  function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      var str = iconv.decode(new Buffer(body), "big5");
-      //console.log(str);
+async function logout() {
+  const response = await axios.get('logout.php', {
+    responseType: 'arraybuffer',
+    jar: cookieJar,
+    withCredentials: true,
+  });
+
+  if (response.status == 200) {
+    const data = iconv.decode(Buffer.from(response.data), "big5");
+  } else {
+    throw new LoginError(-1, data, "Logout failed.");
+  }
+}
+
+async function login(form) {
+  const response = await axios.post('login.php', form, {
+    responseType: 'arraybuffer',
+    jar: cookieJar,
+    withCredentials: true,
+  });
+
+  if (response.status == 200) {
+    const data = iconv.decode(Buffer.from(response.data), "big5");
+
+    console.log("Login response length: " + data.length); // login success when str.length < 80
+    if (data.length == 147 || data.length == 58) {
+      return 0;
+    } else if (data.length == 308) {
+      console.log( "Login status: Double login, logout and login again" );
+      await logout();
+      return await login(form);
+    } else if (data.length == 122 || data.length == 123) {
+      throw new LoginError(1, data, "Login failed: Wrong username or password!");
+    }else{
+      throw new LoginError(2, data, "Login failed: Unknown condition.");
     }
-  });// logout request
+  }
 }
 
-function login(form, callback) {
-  request.post({
-      url:'http://course.ncku.edu.tw/course/login.php',
-      form: form
-    },
-    function (error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var str = iconv.decode(new Buffer(body), "big5");
-        console.log("Login response length: " + str.length); // login success when str.length < 80
+async function getSchedule() {
+  const response = await axios.get('schedule.php', {
+    responseType: 'arraybuffer',
+    jar: cookieJar,
+    withCredentials: true,
+  });
 
-        if(str.length == 147 || str.length == 58) {
-          console.log( "Login status: Login success!" );
-          request('http://course.ncku.edu.tw/course/schedule.php',
-            function (error, response, body) {
-              if (!error && response.statusCode == 200) {
-                var str = iconv.decode(new Buffer(body), "big5");
-                //console.log(str);
-                logout();
-                return callback(0,str);
-              }
-            })// schedule request
-        }else if(str.length == 308){
-          console.log( "Login status: Double login, logout and login again" );
-          logout();
-          login(form, callback);
-        }else if(str.length == 122 || str.length == 123){
-          console.log( "Login status: Wrong username or password!" );
-          return callback(1);
-        }else{
-          console.log( "Login status: Unknown condition." );
-          return callback(-1);
-        }
-
-      }
-    });// login request
+  if (response.status == 200) {
+    return iconv.decode(Buffer.from(response.data), "big5");
+  }
 }
 
 module.exports = get;
