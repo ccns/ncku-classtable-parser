@@ -29,7 +29,7 @@ app.post('/', async function (req, res) {
         table[i][j] = {};
         table[i][j].course_no = course_no;
         table[i][j].text = text;
-        
+
         function catchCounter() {
           var ii = i; // closure
           var jj = j;
@@ -81,14 +81,8 @@ app.post('/', async function (req, res) {
 
 });
 
-app.get('/search', function (req, res) {
-  var q = req.query.q;
-  require('request')('http://course.c4labs.xyz/search/?q=' + q, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.json(body);
-    }
-  })
+app.get('/check', function (req, res) {
+  res.send("I am alive!");
 });
 
 app.listen( process.env.PORT || 3000 , function () {
