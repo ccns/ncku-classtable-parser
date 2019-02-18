@@ -82,6 +82,7 @@ app.post('/', async function (req, res) {
 });
 
 app.get('/check', function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*');
   res.send("I am alive!");
 });
 
