@@ -56,7 +56,11 @@ app.post('/', async function (req, res) {
                 // console.log(table[ii][jj]);
 
                 if (counter == total)
-                  res.json(JSON.stringify(table));
+                  res.json(JSON.stringify({
+                    status: 0,
+                    message: 'Success',
+                    table: table,
+                  }));
               });
             } else {
               console.log(course_no+" cached!");
@@ -74,9 +78,18 @@ app.post('/', async function (req, res) {
     }
 
     if (params.room == "false")
-      res.json(JSON.stringify(table))
+      res.json(JSON.stringify({
+        status: 0,
+        message: 'Success',
+        table: table,
+      }));
+
   } catch (error) {
     console.error(error);
+    res.json(JSON.stringify({
+      status: error.status,
+      message: error.message,
+    }));
   }
 
 });
